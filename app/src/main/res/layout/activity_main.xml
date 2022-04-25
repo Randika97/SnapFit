@@ -41,6 +41,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginBottom="244dp"
         android:backgroundTint="#577876"
+        android:clickable="true"
         android:fontFamily="@font/medium"
         android:text="Let's Start"
         app:cornerRadius="40dp"
