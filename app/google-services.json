@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "195817531071",
+    "project_id": "snapfit-c5f31",
+    "storage_bucket": "snapfit-c5f31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195817531071:android:7863006fee5840daeec80a",
+        "android_client_info": {
+          "package_name": "com.example.snapfit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195817531071-beedhe031q45sfql1uns87k4q6j7rde1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiWjXLmU-J6Uf2ek4PH4_U0ottHi3ot5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195817531071-beedhe031q45sfql1uns87k4q6j7rde1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
