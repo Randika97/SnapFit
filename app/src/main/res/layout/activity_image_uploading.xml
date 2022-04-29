@@ -169,7 +169,7 @@
     </androidx.cardview.widget.CardView>
 
     <ImageButton
-        android:id="@+id/uploadFigure"
+        android:id="@+id/uploadFigureFront"
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:layout_marginStart="16dp"
@@ -196,5 +196,15 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/uploadFigureSide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/cardViewFigureOne"
+        app:layout_constraintHorizontal_bias="0.369"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/uploadFigureFront"
+        app:srcCompat="@drawable/image_upload_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
