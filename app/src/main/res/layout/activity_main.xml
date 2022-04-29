@@ -4,15 +4,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/landing_image"
     tools:context=".MainActivity">
-
     <TextView
+        android:id="@+id/landingQuote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:fontFamily="@font/semibold"
+        android:text="Attire For U \nBest Fashion \nand Stylish"
+        android:textColor="#616161"
+        android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.195"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.426"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/landingImage"
+        android:layout_width="291dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="244dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.35"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/button_style"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/landingButton"
+        android:layout_width="140dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="244dp"
+        android:backgroundTint="#577876"
+        android:clickable="true"
+        android:fontFamily="@font/medium"
+        android:text="Let's Start"
+        app:cornerRadius="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.004"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

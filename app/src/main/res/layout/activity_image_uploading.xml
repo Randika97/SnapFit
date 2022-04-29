@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FBFBFB"
+    tools:context=".ImageUploading">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/activity_header" />
+
+    <TextView
+        android:id="@+id/imgUploadQuote"
+        android:layout_width="217dp"
+        android:layout_height="46dp"
+        android:fontFamily="@font/semibold"
+        android:gravity="center"
+        android:text="Let us help you to find your perfect match"
+        android:textColor="#546C6B"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        app:layout_constraintVertical_bias="0.057"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/imgUploadFigureQuote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="568dp"
+        android:fontFamily="@font/medium"
+        android:text="Upload your front and side view of the figure"
+        android:textColor="#797979"
+        android:textSize="17dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.481"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewFigureOne"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="240dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewFigureOne"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/front_body">
+        </ImageView>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewFigureTwo"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="240dp"
+        android:layout_marginEnd="28dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
+
+         <ImageView
+            android:id="@+id/imageViewFigureTwo"
+            android:layout_width="wrap_content"
+            android:layout_height="110dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/front_body"
+            tools:ignore="MissingConstraints"></ImageView>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/imgUploadClothQuote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="376dp"
+        android:fontFamily="@font/medium"
+        android:text="Upload your outfit image to get a feedback"
+        android:textColor="#797979"
+        android:textSize="17dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/uploadCloth"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="270dp"
+        android:layout_marginBottom="181dp"
+        android:backgroundTint="#ffffff"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.066"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgUploadClothQuote"
+        app:layout_constraintVertical_bias="0.395"
+        app:srcCompat="@drawable/image_upload_icon"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewClothOne"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="438dp"
+        android:layout_marginEnd="141dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints">
+
+          <ImageView
+            android:id="@+id/imageViewClothOne"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black_top"></ImageView>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewClothTwo"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="285dp"
+        android:layout_marginTop="438dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewClothTwo"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black_top"
+            tools:ignore="MissingConstraints"></ImageView>
+    </androidx.cardview.widget.CardView>
+
+    <ImageButton
+        android:id="@+id/uploadFigureFront"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="444dp"
+        android:backgroundTint="#ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/image_upload_icon"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/imageUploadPageButton"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="116dp"
+        android:backgroundTint="#577876"
+        android:drawableRight="@drawable/right_arrow"
+        android:fontFamily="@font/medium"
+        android:text="Get Results"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/uploadFigureSide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/cardViewFigureOne"
+        app:layout_constraintHorizontal_bias="0.369"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/uploadFigureFront"
+        app:srcCompat="@drawable/image_upload_icon" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
