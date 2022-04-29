@@ -8,7 +8,7 @@
     tools:context=".ResultDisplay">
     <include
         android:id="@+id/include"
-        layout="@layout/activity_header" />
+        layout="@layout/activity_toolbar" />
 
     <TextView
         android:id="@+id/textView9"
