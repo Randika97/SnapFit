@@ -17,24 +17,22 @@
             android:exported="false" />
         <activity
             android:name=".ImageUploading"
-            android:exported="true">
-            <intent-filter>
+            android:exported="false">
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".ResultDisplay"
-            android:exported="false">
+            android:exported="true">
 
-            <!--
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".Login"
