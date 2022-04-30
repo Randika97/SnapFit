@@ -1,8 +1,11 @@
 package com.example.snapfit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,7 +14,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.google.firebase.auth.UserInfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import android.view.View;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -36,6 +39,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ImageUploading extends AppCompatActivity {
+    //Initialize variables
+    DrawerLayout drawerLayout;
     UserService userService;
     List<User> list = new ArrayList<User>();
     String figureFrontPath, figureSidePath,clothPath;
@@ -48,6 +53,10 @@ public class ImageUploading extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_uploading);
+        //Assign variable
+        drawerLayout = findViewById(R.id.drawer_layout);
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             for (UserInfo profile : user.getProviderData()) {
@@ -79,6 +88,41 @@ public class ImageUploading extends AppCompatActivity {
             startActivityForResult(galleryIntent, 2);
         });
 
+    }
+    public void ClickMenu(View view){
+        //open drawer
+        openDrawer(drawerLayout);
+    }
+    private static void openDrawer(DrawerLayout drawerLayout) {
+        //open drawer layout
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+    public void ClickLogo(View view){
+        //close drawer
+        closeDrawer(drawerLayout);
+    }
+    public static void closeDrawer(DrawerLayout drawerLayout) {
+        //close drawer layout
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            //when drawer is opes close it
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+    public void ClickHome(View view){
+        //Redirect to landing page
+        redirectActivity(this,MainActivity.class);
+    }
+    public static void redirectActivity(Activity activity, Class aClass) {
+        //Initialize intent
+        Intent intent = new Intent(activity,aClass);
+        //set flag
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        closeDrawer(drawerLayout);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
