@@ -39,7 +39,9 @@ public class ImageUploading extends AppCompatActivity {
     UserService userService;
     List<User> list = new ArrayList<User>();
     String figureFrontPath, figureSidePath,clothPath;
-    ImageButton figureFront,figureSide,clothFront;
+    Button figureFront;
+    Button figureSide;
+    Button clothFront;
     Button UploadButton;
     public String authEmail,uid;
     @Override
@@ -54,9 +56,9 @@ public class ImageUploading extends AppCompatActivity {
 
             }
         }
-        figureFront = (ImageButton)findViewById(R.id.uploadFigureFront);
-        figureSide =  (ImageButton)findViewById(R.id.uploadFigureSide);
-        clothFront =(ImageButton)findViewById(R.id.uploadCloth);
+        figureFront = (Button)findViewById(R.id.uploadFigureFront);
+        figureSide =  (Button)findViewById(R.id.uploadFigureSide);
+        clothFront =(Button)findViewById(R.id.uploadCloth);
         UploadButton = (Button) findViewById(R.id.imageUploadPageButton);
         UploadButton.setOnClickListener((View.OnClickListener) v -> uploadMultipleFiles());
 
