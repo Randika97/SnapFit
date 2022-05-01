@@ -29,7 +29,6 @@ import com.google.firebase.auth.UserInfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import android.view.View;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -38,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ImageUploading extends AppCompatActivity {
+public class ImageUploading extends AppCompatActivity  {
     //Initialize variables
     DrawerLayout drawerLayout;
     UserService userService;
@@ -124,6 +123,9 @@ public class ImageUploading extends AppCompatActivity {
         super.onPause();
         closeDrawer(drawerLayout);
     }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -174,21 +176,21 @@ public class ImageUploading extends AppCompatActivity {
     private void uploadMultipleFiles() {
         // Map is used to multipart the file using okhttp3.RequestBody
         File fileFigureFrontPath = new File(figureFrontPath);
-        File fileFigureSide = new File(figureSidePath);
-        File fileClothFront = new File(clothPath);
+//        File fileFigureSide = new File(figureSidePath);
+//        File fileClothFront = new File(clothPath);
 
         // Parsing any Media type file
         RequestBody requestBody1 = RequestBody.create(MediaType.parse("*/*"), fileFigureFrontPath);
-        RequestBody requestBody2 = RequestBody.create(MediaType.parse("*/*"), fileFigureSide);
-        RequestBody requestBody3 = RequestBody.create(MediaType.parse("*/*"), fileClothFront);
-        RequestBody email = RequestBody.create(MediaType.parse("text/plain"), authEmail);
+//        RequestBody requestBody2 = RequestBody.create(MediaType.parse("*/*"), fileFigureSide);
+//        RequestBody requestBody3 = RequestBody.create(MediaType.parse("*/*"), fileClothFront);
+//        RequestBody email = RequestBody.create(MediaType.parse("text/plain"), authEmail);
 
         MultipartBody.Part fileToUpload1 = MultipartBody.Part.createFormData("file1", fileFigureFrontPath.getName(), requestBody1);
-        MultipartBody.Part fileToUpload2 = MultipartBody.Part.createFormData("file2", fileFigureSide.getName(), requestBody2);
-        MultipartBody.Part fileToUpload3 = MultipartBody.Part.createFormData("file3", fileClothFront.getName(), requestBody3);
+//        MultipartBody.Part fileToUpload2 = MultipartBody.Part.createFormData("file2", fileFigureSide.getName(), requestBody2);
+//        MultipartBody.Part fileToUpload3 = MultipartBody.Part.createFormData("file3", fileClothFront.getName(), requestBody3);
 
         UserService getResponse = AppConfig.getRetrofit().create(UserService.class);
-        Call<ServerResponse> call = getResponse.uploadMulFile(fileToUpload1, fileToUpload2,fileToUpload3,authEmail);
+        Call<ServerResponse> call = getResponse.uploadMulFile(fileToUpload1);
         call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
@@ -208,6 +210,7 @@ public class ImageUploading extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "failed uploading", Toast.LENGTH_SHORT).show();
             }
         });
     }
