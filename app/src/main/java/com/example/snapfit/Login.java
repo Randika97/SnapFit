@@ -21,7 +21,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mAuth.getCurrentUser() == null) {
+
             setContentView(R.layout.activity_login);
             mAuth = FirebaseAuth.getInstance();
             signUp = findViewById(R.id.textView6);
@@ -30,11 +30,6 @@ public class Login extends AppCompatActivity {
             loginBtn = findViewById(R.id.loginBtn);
             loginBtn.setOnClickListener(v -> loginUserAccount());
             signUp.setOnClickListener(v -> signupNewUser());
-        }else{
-            startActivity(new Intent(Login.this, MainActivity.class));
-            finish();
-        }
-
     }
 
     private void loginUserAccount() {
@@ -56,7 +51,7 @@ public class Login extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
 
-                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        Intent intent = new Intent(Login.this, ImageUploading.class);
                         startActivity(intent);
                     }
                     else {

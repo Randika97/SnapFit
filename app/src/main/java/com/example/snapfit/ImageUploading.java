@@ -1,8 +1,11 @@
 package com.example.snapfit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,7 +14,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import android.widget.Toast;
 
@@ -35,17 +37,25 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ImageUploading extends AppCompatActivity {
+public class ImageUploading extends AppCompatActivity  {
+    //Initialize variables
+    DrawerLayout drawerLayout;
     UserService userService;
     List<User> list = new ArrayList<User>();
     String figureFrontPath, figureSidePath,clothPath;
-    ImageButton figureFront,figureSide,clothFront;
+    Button figureFront;
+    Button figureSide;
+    Button clothFront;
     Button UploadButton;
     public String authEmail,uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_uploading);
+        //Assign variable
+        drawerLayout = findViewById(R.id.drawer_layout);
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             for (UserInfo profile : user.getProviderData()) {
@@ -54,9 +64,9 @@ public class ImageUploading extends AppCompatActivity {
 
             }
         }
-        figureFront = (ImageButton)findViewById(R.id.uploadFigureFront);
-        figureSide =  (ImageButton)findViewById(R.id.uploadFigureSide);
-        clothFront =(ImageButton)findViewById(R.id.uploadCloth);
+        figureFront = (Button)findViewById(R.id.uploadFigureFront);
+        figureSide =  (Button)findViewById(R.id.uploadFigureSide);
+        clothFront =(Button)findViewById(R.id.uploadCloth);
         UploadButton = (Button) findViewById(R.id.imageUploadPageButton);
         UploadButton.setOnClickListener((View.OnClickListener) v -> uploadMultipleFiles());
 
@@ -78,6 +88,44 @@ public class ImageUploading extends AppCompatActivity {
         });
 
     }
+    public void ClickMenu(View view){
+        //open drawer
+        openDrawer(drawerLayout);
+    }
+    private static void openDrawer(DrawerLayout drawerLayout) {
+        //open drawer layout
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+    public void ClickLogo(View view){
+        //close drawer
+        closeDrawer(drawerLayout);
+    }
+    public static void closeDrawer(DrawerLayout drawerLayout) {
+        //close drawer layout
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            //when drawer is opes close it
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+    public void ClickHome(View view){
+        //Redirect to landing page
+        redirectActivity(this,MainActivity.class);
+    }
+    public static void redirectActivity(Activity activity, Class aClass) {
+        //Initialize intent
+        Intent intent = new Intent(activity,aClass);
+        //set flag
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        closeDrawer(drawerLayout);
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -128,21 +176,21 @@ public class ImageUploading extends AppCompatActivity {
     private void uploadMultipleFiles() {
         // Map is used to multipart the file using okhttp3.RequestBody
         File fileFigureFrontPath = new File(figureFrontPath);
-        File fileFigureSide = new File(figureSidePath);
-        File fileClothFront = new File(clothPath);
+//        File fileFigureSide = new File(figureSidePath);
+//        File fileClothFront = new File(clothPath);
 
         // Parsing any Media type file
         RequestBody requestBody1 = RequestBody.create(MediaType.parse("*/*"), fileFigureFrontPath);
-        RequestBody requestBody2 = RequestBody.create(MediaType.parse("*/*"), fileFigureSide);
-        RequestBody requestBody3 = RequestBody.create(MediaType.parse("*/*"), fileClothFront);
-        RequestBody email = RequestBody.create(MediaType.parse("text/plain"), authEmail);
+//        RequestBody requestBody2 = RequestBody.create(MediaType.parse("*/*"), fileFigureSide);
+//        RequestBody requestBody3 = RequestBody.create(MediaType.parse("*/*"), fileClothFront);
+//        RequestBody email = RequestBody.create(MediaType.parse("text/plain"), authEmail);
 
         MultipartBody.Part fileToUpload1 = MultipartBody.Part.createFormData("file1", fileFigureFrontPath.getName(), requestBody1);
-        MultipartBody.Part fileToUpload2 = MultipartBody.Part.createFormData("file2", fileFigureSide.getName(), requestBody2);
-        MultipartBody.Part fileToUpload3 = MultipartBody.Part.createFormData("file3", fileClothFront.getName(), requestBody3);
+//        MultipartBody.Part fileToUpload2 = MultipartBody.Part.createFormData("file2", fileFigureSide.getName(), requestBody2);
+//        MultipartBody.Part fileToUpload3 = MultipartBody.Part.createFormData("file3", fileClothFront.getName(), requestBody3);
 
         UserService getResponse = AppConfig.getRetrofit().create(UserService.class);
-        Call<ServerResponse> call = getResponse.uploadMulFile(fileToUpload1, fileToUpload2,fileToUpload3,authEmail);
+        Call<ServerResponse> call = getResponse.uploadMulFile(fileToUpload1);
         call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
@@ -162,6 +210,7 @@ public class ImageUploading extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "failed uploading", Toast.LENGTH_SHORT).show();
             }
         });
     }

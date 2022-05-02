@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Dashboard() {
-        Intent intent = new Intent(MainActivity.this, ImageUploading.class);
+        Intent intent = new Intent(MainActivity.this, Login.class);
         startActivity(intent);
 
     }

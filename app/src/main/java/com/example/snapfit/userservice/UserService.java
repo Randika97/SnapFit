@@ -24,9 +24,6 @@ public interface UserService {
 
     @Multipart
     @POST("checkMatch/")
-    Call<ServerResponse> uploadMulFile(@Part MultipartBody.Part bodyFront ,
-                                       @Part MultipartBody.Part bodySide,
-                                       @Part MultipartBody.Part clothFront,
-                                       @Part("email") String email);
+    Call<ServerResponse> uploadMulFile(@Part MultipartBody.Part bodyFront);
 
 }
