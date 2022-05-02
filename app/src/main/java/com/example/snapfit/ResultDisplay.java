@@ -10,9 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.snapfit.model.User;
-import com.example.snapfit.retrofit.AppConfig;
-import com.example.snapfit.userservice.UserService;
+import com.example.snapfit.model.Result;
+import com.example.snapfit.userservice.Service;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ResultDisplay extends AppCompatActivity {
-    private UserService userService;
+    private Service service;
     DrawerLayout drawerLayout;
     private static final String TAG = "ResultDisplay";
     @Override
@@ -29,8 +28,6 @@ public class ResultDisplay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_display);
         drawerLayout = findViewById(R.id.drawer_layout);
-        userService = AppConfig.getRetrofit().create(UserService.class);
-        callReadAPI();
     }
     public void ClickMenu(View view){
         //open drawer
@@ -62,19 +59,5 @@ public class ResultDisplay extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
-    public void callReadAPI() {
-        // pass query parameter as user to get all the users
-        userService.getResults().enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                String message = response.message();
-                List<User> usersList = response.body();
-                int usersSize = usersList.size();
-                Log.i(TAG,"usersSize : "+ usersSize);
-            }
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-            }
-        });
-    }
+
 }
