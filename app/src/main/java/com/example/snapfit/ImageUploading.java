@@ -23,11 +23,8 @@ import com.example.snapfit.userservice.Service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -36,7 +33,6 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-//import retrofit2.Response;
 
 public class ImageUploading extends AppCompatActivity  {
     //Initialize variables
@@ -174,29 +170,10 @@ public class ImageUploading extends AppCompatActivity  {
     private void uploadMultipleFiles() {
         // Map is used to multipart the file using okhttp3.RequestBody
         File fileFigureFrontPath = new File(figureFrontPath);
-        //File fileFigureSide = new File(figureSidePath);
-        //File fileClothFront = new File(clothPath);
-        //method One
-        // Parsing any Media type file
-        /*RequestBody requestBody1 = RequestBody.create(fileFigureFrontPath, MediaType.parse("multipart/form-data"));
-        RequestBody requestBody2 = RequestBody.create(MediaType.parse(""), fileFigureSide);
-        RequestBody requestBody3 = RequestBody.create(MediaType.parse(""), fileClothFront);
-        RequestBody email = RequestBody.create(MediaType.parse("text/plain"), authEmail);
-        MultipartBody.Part fileToUpload1 = MultipartBody.Part.createFormData("bodyfront", fileFigureFrontPath.getName(), requestBody1);
-        MultipartBody.Part fileToUpload2 = MultipartBody.Part.createFormData("file2", fileFigureSide.getName(), requestBody2);
-        MultipartBody.Part fileToUpload3 = MultipartBody.Part.createFormData("file3", fileClothFront.getName(), requestBody3);
-        Call<ServerResponse> call = new RetrofitConfig().getService().uploadMulFile(filePart);
-        Service getResponse = RetrofitConfig.getRetrofit().create(Service.class);
-        Call<ServerResponse> call = getResponse.uploadMulFile(fileToUpload1);*/
-        //Multipart with with responseBody
-        //MultipartBody.Part filePart = MultipartBody.Part.createFormData("filePart", fileFigureFrontPath.getName(), RequestBody.create(fileFigureFrontPath,MediaType.parse("image/*")));
-
-        //method two
         RequestBody reqBody = RequestBody.create(fileFigureFrontPath, MediaType.parse("multipart/form-file"));
         MultipartBody.Part partImage = MultipartBody.Part.createFormData("file", fileFigureFrontPath.getName(), reqBody);
         Service getResponse = new RetrofitConfig().getInstance().getService();
         Call<ServerResponse> call = getResponse.uploadMulFile(partImage);
-      //Call<ServerResponse> call = new RetrofitConfig().getService().uploadMulFile(partImage);
         call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Response<ServerResponse> response, Retrofit retrofit) {
