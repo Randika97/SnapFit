@@ -14,15 +14,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getStart = findViewById(R.id.landingButton);
         getStart.setOnClickListener(v -> Dashboard());
-
     }
-
     private void Dashboard() {
         Intent intent = new Intent(MainActivity.this, Login.class);
         startActivity(intent);
-
     }
-
-
-
 }

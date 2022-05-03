@@ -91,7 +91,7 @@
             android:layout_height="40dp"
             android:backgroundTint="#577876"
             android:fontFamily="@font/medium"
-            android:text="Front view"
+            android:text=""
             app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

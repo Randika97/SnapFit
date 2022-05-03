@@ -1,5 +1,6 @@
 package com.example.snapfit;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -26,8 +28,13 @@ import com.example.snapfit.userservice.Service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,35 +52,50 @@ public class ImageUploading extends AppCompatActivity {
     //Initialize variables
     DrawerLayout drawerLayout;
     String figureFrontPath, clothPath;
-    Button figureFront;
+    Button figure;
     Button clothFront;
     Button UploadButton;
     public String authEmail;
     public String authUid;
+    String BodyStatus;
     Bitmap bitmap;
     DatabaseReference mDatabase;
+    DatabaseReference clothRef;
 
+    @SuppressLint("SetTextI18n")
     @Override
     @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_uploading);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        //Assign variable
-        drawerLayout = findViewById(R.id.drawer_layout);
-
         //Get Current Auth user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             for (UserInfo profile : user.getProviderData()) {
                 authEmail = profile.getEmail();
                 authUid = authEmail.replaceAll("@(.*).(.*)", "");
-
-
             }
         }
+        clothRef= FirebaseDatabase.getInstance().getReference().child("BodyImage").child(authUid);
         //Init UI elements from XML
-        figureFront = (Button) findViewById(R.id.uploadFigureFront);
+        clothRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NotNull DataSnapshot snapshot) {
+                BodyStatus = snapshot.child("image").getValue(String.class);
+            }
+            @Override
+            public void onCancelled(@NotNull DatabaseError error) {
+            }
+        });
+        setContentView(R.layout.activity_image_uploading);
+        figure = findViewById(R.id.uploadFigureFront);
+        if(BodyStatus=="true"){
+            figure.setText("Edit");
+        }else{
+            figure.setText("Upload");
+        }
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        //Init UI elements from XML
+        drawerLayout = findViewById(R.id.drawer_layout);
         clothFront = (Button) findViewById(R.id.uploadCloth);
         UploadButton = (Button) findViewById(R.id.imageUploadPageButton);
         //Upload phots to API
@@ -81,7 +103,7 @@ public class ImageUploading extends AppCompatActivity {
             uploadMultipleFiles();
         });
 
-        figureFront.setOnClickListener(v -> {
+        figure.setOnClickListener(v -> {
             Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galleryIntent, 0);
