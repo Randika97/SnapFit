@@ -16,7 +16,6 @@ import retrofit.http.POST;
 import retrofit.http.Part;
 
 
-
 public interface Service {
 
     @GET("result/")

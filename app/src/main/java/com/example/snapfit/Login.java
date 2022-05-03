@@ -21,7 +21,14 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SessionManagement sessionManagement = new SessionManagement(Login.this);
+        String userID = sessionManagement.getSession();
 
+        if(userID != null){
+            Intent intent = new Intent(Login.this, ImageUploading.class);
+            startActivity(intent);
+        }
+        else{
             setContentView(R.layout.activity_login);
             mAuth = FirebaseAuth.getInstance();
             signUp = findViewById(R.id.textView6);
@@ -30,6 +37,7 @@ public class Login extends AppCompatActivity {
             loginBtn = findViewById(R.id.loginBtn);
             loginBtn.setOnClickListener(v -> loginUserAccount());
             signUp.setOnClickListener(v -> signupNewUser());
+        }
     }
 
     private void loginUserAccount() {
@@ -50,7 +58,8 @@ public class Login extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
-
+                        SessionManagement sessionManagement = new SessionManagement(Login.this);
+                        sessionManagement.saveSession(firebaseEmail);
                         Intent intent = new Intent(Login.this, ImageUploading.class);
                         startActivity(intent);
                     }

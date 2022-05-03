@@ -54,7 +54,7 @@ public class SignUp extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
 
-                        Intent intent = new Intent(SignUp.this, ImageUploading.class);
+                        Intent intent = new Intent(SignUp.this, MainActivity.class);
                         startActivity(intent);
                     }
                     else {

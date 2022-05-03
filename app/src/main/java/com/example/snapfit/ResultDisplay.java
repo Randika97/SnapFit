@@ -50,6 +50,12 @@ public class ResultDisplay extends AppCompatActivity {
     }
     public void ClickHome(View view){
         //Redirect to landing page
+        redirectActivity(this,ImageUploading.class);
+    }
+    public void ClickLogout(View view){
+        //Redirect to landing page
+        SessionManagement sessionManagement = new SessionManagement(ResultDisplay.this);
+        sessionManagement.removeSession();
         redirectActivity(this,MainActivity.class);
     }
     public static void redirectActivity(Activity activity, Class aClass) {
