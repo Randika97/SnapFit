@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,6 +12,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,16 +38,17 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class ImageUploading extends AppCompatActivity  {
+public class ImageUploading extends AppCompatActivity {
     //Initialize variables
     DrawerLayout drawerLayout;
-    String figureFrontPath, figureSidePath,clothPath;
+    String figureFrontPath, figureSidePath, clothPath;
     Button figureFront;
     Button figureSide;
     Button clothFront;
     Button UploadButton;
-    public String authEmail,uid;
+    public String authEmail, uid;
     Bitmap bitmap;
+
     @Override
     @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +61,15 @@ public class ImageUploading extends AppCompatActivity  {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             for (UserInfo profile : user.getProviderData()) {
-                 uid = profile.getUid();
+                uid = profile.getUid();
                 authEmail = profile.getEmail();
 
             }
         }
         //Init UI elements from XML
-        figureFront = (Button)findViewById(R.id.uploadFigureFront);
-        figureSide =  (Button)findViewById(R.id.uploadFigureSide);
-        clothFront =(Button)findViewById(R.id.uploadCloth);
+        figureFront = (Button) findViewById(R.id.uploadFigureFront);
+        figureSide = (Button) findViewById(R.id.uploadFigureSide);
+        clothFront = (Button) findViewById(R.id.uploadCloth);
         UploadButton = (Button) findViewById(R.id.imageUploadPageButton);
         //Upload phots to API
         UploadButton.setOnClickListener(view -> {
@@ -89,38 +92,45 @@ public class ImageUploading extends AppCompatActivity  {
             startActivityForResult(galleryIntent, 2);
         });
     }
-    public void ClickMenu(View view){
+
+    public void ClickMenu(View view) {
         //open drawer
         openDrawer(drawerLayout);
     }
+
     private static void openDrawer(DrawerLayout drawerLayout) {
         //open drawer layout
         drawerLayout.openDrawer(GravityCompat.START);
     }
-    public void ClickLogo(View view){
+
+    public void ClickLogo(View view) {
         //close drawer
         closeDrawer(drawerLayout);
     }
+
     public static void closeDrawer(DrawerLayout drawerLayout) {
         //close drawer layout
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             //when drawer is opes close it
             drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
-    public void ClickHome(View view){
+
+    public void ClickHome(View view) {
         //Redirect to landing page
-        redirectActivity(this,MainActivity.class);
+        redirectActivity(this, MainActivity.class);
     }
+
     public static void redirectActivity(Activity activity, Class aClass) {
         //Initialize intent
-        Intent intent = new Intent(activity,aClass);
+        Intent intent = new Intent(activity, aClass);
         //set flag
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
+
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         closeDrawer(drawerLayout);
     }
@@ -135,6 +145,10 @@ public class ImageUploading extends AppCompatActivity  {
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                //display selected image in imageview
+                    ImageView myImage = (ImageView) findViewById(R.id.imageViewFigureOne);
+                    myImage.setImageBitmap(bitmap);
+
                 Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 assert cursor != null;
                 cursor.moveToFirst();
@@ -156,6 +170,8 @@ public class ImageUploading extends AppCompatActivity  {
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                ImageView myImage = (ImageView) findViewById(R.id.imageViewClothOne);
+                myImage.setImageBitmap(bitmap);
                 Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 assert cursor != null;
                 cursor.moveToFirst();
@@ -172,7 +188,7 @@ public class ImageUploading extends AppCompatActivity  {
     }
 
     // Uploading Images to server
-    private void uploadMultipleFiles(){
+    private void uploadMultipleFiles() {
 
 
         //Use base64Encode
@@ -204,6 +220,7 @@ public class ImageUploading extends AppCompatActivity  {
                     Log.v("Response", serverResponse.toString());
                 }
             }
+
             @Override
             public void onFailure(Throwable t) {
                 Toast.makeText(getApplicationContext(), "failed uploading", Toast.LENGTH_SHORT).show();
