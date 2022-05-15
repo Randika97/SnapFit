@@ -24,7 +24,8 @@ public interface Service {
     @FormUrlEncoded
     @Multipart
     @POST("/")
-    Call<ServerResponse> uploadMulFile(@Part("file") MultipartBody.Part filepart);
+    Call<ServerResponse> uploadMulFile(@Part("figure") MultipartBody.Part figureFilePart,
+                                       @Part("cloth") MultipartBody.Part clothFilePart);
 
 
     @FormUrlEncoded

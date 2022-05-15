@@ -21,8 +21,8 @@ public class SignUp extends AppCompatActivity {
 
     private EditText email, password,confimPassword;
     private Button regBtn;
-
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +34,9 @@ public class SignUp extends AppCompatActivity {
         regBtn = findViewById(R.id.button);
         regBtn.setOnClickListener(v -> registerNewUser());
     }
+    //Signup New User
     private void registerNewUser() {
-
+        //Init variables
         String firebaseEmail, firebasePassword;
         firebaseEmail = email.getText().toString();
         firebasePassword = password.getText().toString();
@@ -53,7 +54,6 @@ public class SignUp extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
-
                         Intent intent = new Intent(SignUp.this, MainActivity.class);
                         startActivity(intent);
                     }

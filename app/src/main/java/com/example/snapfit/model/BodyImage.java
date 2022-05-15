@@ -1,18 +1,19 @@
 package com.example.snapfit.model;
 
 public class BodyImage {
-    Boolean Image;
+    String Image;
 
     public BodyImage(){}
-    public BodyImage(Boolean image) {
+
+    public BodyImage(String image) {
         Image = image;
     }
 
-    public Boolean getImage() {
+    public String getImage() {
         return Image;
     }
 
-    public void setImage(Boolean image) {
+    public void setImage(String image) {
         Image = image;
     }
 }

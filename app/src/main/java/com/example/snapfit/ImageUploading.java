@@ -21,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.snapfit.firebase.Database;
+import com.example.snapfit.firebase.OnGetDataListener;
 import com.example.snapfit.model.BodyImage;
 import com.example.snapfit.retrofit.RetrofitConfig;
 import com.example.snapfit.retrofit.ServerResponse;
@@ -57,16 +59,17 @@ public class ImageUploading extends AppCompatActivity {
     Button UploadButton;
     public String authEmail;
     public String authUid;
-    String BodyStatus;
+    String BodyStatus=null;
     Bitmap bitmap;
     DatabaseReference mDatabase;
-    DatabaseReference clothRef;
 
     @SuppressLint("SetTextI18n")
     @Override
     @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       setContentView(R.layout.activity_image_uploading);
+       figure = (Button) findViewById(R.id.uploadFigureFront);
         //Get Current Auth user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -75,29 +78,26 @@ public class ImageUploading extends AppCompatActivity {
                 authUid = authEmail.replaceAll("@(.*).(.*)", "");
             }
         }
-        clothRef= FirebaseDatabase.getInstance().getReference().child("BodyImage").child(authUid);
-        //Init UI elements from XML
-        clothRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NotNull DataSnapshot snapshot) {
-                BodyStatus = snapshot.child("image").getValue(String.class);
+        //checking the passed Country value from previous acitvity and set it to text
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                BodyStatus = extras.getString("bodyStatus");
+                figure.setText("Edit");
+            } else {
+                figure.setText("Upload");
             }
-            @Override
-            public void onCancelled(@NotNull DatabaseError error) {
-            }
-        });
-        setContentView(R.layout.activity_image_uploading);
-        figure = findViewById(R.id.uploadFigureFront);
-        if(BodyStatus=="true"){
-            figure.setText("Edit");
+
         }else{
-            figure.setText("Upload");
+            BodyStatus = (String) savedInstanceState.getSerializable("bodyStatus");
+            figure.setText("Edit");
         }
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         //Init UI elements from XML
         drawerLayout = findViewById(R.id.drawer_layout);
-        clothFront = (Button) findViewById(R.id.uploadCloth);
-        UploadButton = (Button) findViewById(R.id.imageUploadPageButton);
+        clothFront = findViewById(R.id.uploadCloth);
+        UploadButton = findViewById(R.id.imageUploadPageButton);
         //Upload phots to API
         UploadButton.setOnClickListener(view -> {
             uploadMultipleFiles();
@@ -115,21 +115,19 @@ public class ImageUploading extends AppCompatActivity {
         });
     }
 
+    //Drawer Functions
     public void ClickMenu(View view) {
         //open drawer
         openDrawer(drawerLayout);
     }
-
     private static void openDrawer(DrawerLayout drawerLayout) {
         //open drawer layout
         drawerLayout.openDrawer(GravityCompat.START);
     }
-
     public void ClickLogo(View view) {
         //close drawer
         closeDrawer(drawerLayout);
     }
-
     public static void closeDrawer(DrawerLayout drawerLayout) {
         //close drawer layout
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -137,7 +135,6 @@ public class ImageUploading extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
-
     public void ClickHome(View view) {
         //Redirect to landing page
         redirectActivity(this, MainActivity.class);
@@ -148,7 +145,6 @@ public class ImageUploading extends AppCompatActivity {
         sessionManagement.removeSession();
         redirectActivity(this,MainActivity.class);
     }
-
     public static void redirectActivity(Activity activity, Class aClass) {
         //Initialize intent
         Intent intent = new Intent(activity, aClass);
@@ -156,7 +152,6 @@ public class ImageUploading extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -206,30 +201,32 @@ public class ImageUploading extends AppCompatActivity {
 
     // Uploading Images to server
     private void uploadMultipleFiles() {
+
         BodyImage bodyImage = new BodyImage();
-        bodyImage.setImage(true);
-        mDatabase.child("BodyImage").child(authUid).setValue(bodyImage);
         //Use base64Encode
-/*        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+       /* ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         String image = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
         Service getResponse = new RetrofitConfig().getInstance().getService();
         Call<ServerResponse> call = getResponse.uploadMulFileBaseFormat(image);*/
-
         // Map is used to multipart the file using okhttp3.RequestBody
         File clothFilePath = new File(clothPath);
+        File figureFilePath = new File(figureFrontPath);
         RequestBody reqBody = RequestBody.create(clothFilePath, MediaType.parse("multipart/form-file"));
-        MultipartBody.Part partImage = MultipartBody.Part.createFormData("file", clothFilePath.getName(), reqBody);
+        MultipartBody.Part clothPart = MultipartBody.Part.createFormData("file", clothFilePath.getName(), reqBody);
+        MultipartBody.Part figurePart = MultipartBody.Part.createFormData("file", figureFilePath.getName(), reqBody);
         Service getResponse = new RetrofitConfig().getInstance().getService();
-        Call<ServerResponse> call = getResponse.uploadMulFile(partImage);
+        Call<ServerResponse> call = getResponse.uploadMulFile(clothPart,figurePart);
         call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Response<ServerResponse> response, Retrofit retrofit) {
                 ServerResponse serverResponse = response.body();
                 if (serverResponse != null) {
                     if (serverResponse.getSuccess()) {
-                        Toast.makeText(getApplicationContext(), serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        bodyImage.setImage("true");
+                        mDatabase.child("BodyImage").child(authUid).setValue(bodyImage);
                         Intent intent = new Intent(ImageUploading.this, ResultDisplay.class);
+                        intent.putExtra("result", serverResponse.getMessage());
                         startActivity(intent);
                     } else {
                         Toast.makeText(getApplicationContext(), serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
@@ -238,7 +235,6 @@ public class ImageUploading extends AppCompatActivity {
                     Log.v("Response", serverResponse.toString());
                 }
             }
-
             @Override
             public void onFailure(Throwable t) {
                 Toast.makeText(getApplicationContext(), "failed uploading", Toast.LENGTH_SHORT).show();

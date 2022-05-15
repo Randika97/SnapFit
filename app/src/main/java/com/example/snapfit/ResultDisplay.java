@@ -8,7 +8,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.TextureView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.snapfit.model.Result;
 import com.example.snapfit.userservice.Service;
@@ -20,15 +22,35 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ResultDisplay extends AppCompatActivity {
-    private Service service;
     DrawerLayout drawerLayout;
+    String matchResult;
+    private TextView result;
     private static final String TAG = "ResultDisplay";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_display);
         drawerLayout = findViewById(R.id.drawer_layout);
+        result = (TextView) findViewById(R.id.textView5);
+        //checking the passed Country value from previous acitvity and set it to text
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                matchResult = extras.getString("result");
+                if(matchResult.equals("matching")){
+                    result.setText("Matching");
+                }else{
+                    result.setText("Not-Matching");
+                }
+            } else {
+                result.setText("Error matchning");
+            }
+        }
     }
+
+
+
+    //Drawer functions
     public void ClickMenu(View view){
         //open drawer
         openDrawer(drawerLayout);
