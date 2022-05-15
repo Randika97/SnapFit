@@ -1,94 +1,122 @@
 package com.example.snapfit;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-
-import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-
-import android.widget.Toast;
-
-import com.example.snapfit.model.User;
-import com.example.snapfit.retrofit.AppConfig;
+import com.example.snapfit.firebase.Database;
+import com.example.snapfit.firebase.OnGetDataListener;
+import com.example.snapfit.model.BodyImage;
+import com.example.snapfit.retrofit.RetrofitConfig;
 import com.example.snapfit.retrofit.ServerResponse;
-import com.example.snapfit.userservice.UserService;
+import com.example.snapfit.userservice.Service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
-public class ImageUploading extends AppCompatActivity  {
+public class ImageUploading extends AppCompatActivity {
     //Initialize variables
     DrawerLayout drawerLayout;
-    UserService userService;
-    List<User> list = new ArrayList<User>();
-    String figureFrontPath, figureSidePath,clothPath;
-    Button figureFront;
-    Button figureSide;
+    String figureFrontPath, clothPath;
+    Button figure;
     Button clothFront;
     Button UploadButton;
-    public String authEmail,uid;
+    public String authEmail;
+    public String authUid;
+    String BodyStatus=null;
+    Bitmap bitmap;
+    DatabaseReference mDatabase;
+
+    @SuppressLint("SetTextI18n")
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_uploading);
-        //Assign variable
-        drawerLayout = findViewById(R.id.drawer_layout);
-
-
+       setContentView(R.layout.activity_image_uploading);
+       figure = (Button) findViewById(R.id.uploadFigureFront);
+        //Get Current Auth user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             for (UserInfo profile : user.getProviderData()) {
-                 uid = profile.getUid();
                 authEmail = profile.getEmail();
-
+                authUid = authEmail.replaceAll("@(.*).(.*)", "");
             }
         }
-        figureFront = (Button)findViewById(R.id.uploadFigureFront);
-        figureSide =  (Button)findViewById(R.id.uploadFigureSide);
-        clothFront =(Button)findViewById(R.id.uploadCloth);
-        UploadButton = (Button) findViewById(R.id.imageUploadPageButton);
-        UploadButton.setOnClickListener((View.OnClickListener) v -> uploadMultipleFiles());
+        //checking the passed Country value from previous acitvity and set it to text
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                BodyStatus = extras.getString("bodyStatus");
+                figure.setText("Edit");
+            } else {
+                figure.setText("Upload");
+            }
 
-        figureFront.setOnClickListener(v -> {
+        }else{
+            BodyStatus = (String) savedInstanceState.getSerializable("bodyStatus");
+            figure.setText("Edit");
+        }
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        //Init UI elements from XML
+        drawerLayout = findViewById(R.id.drawer_layout);
+        clothFront = findViewById(R.id.uploadCloth);
+        UploadButton = findViewById(R.id.imageUploadPageButton);
+        //Upload phots to API
+        UploadButton.setOnClickListener(view -> {
+            uploadMultipleFiles();
+        });
+
+        figure.setOnClickListener(v -> {
             Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galleryIntent, 0);
         });
-
-        figureSide.setOnClickListener(v -> {
+        clothFront.setOnClickListener(v -> {
             Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galleryIntent, 1);
         });
-        clothFront.setOnClickListener(v -> {
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(galleryIntent, 2);
-        });
-
     }
-    public void ClickMenu(View view){
+
+    //Drawer Functions
+    public void ClickMenu(View view) {
         //open drawer
         openDrawer(drawerLayout);
     }
@@ -96,74 +124,73 @@ public class ImageUploading extends AppCompatActivity  {
         //open drawer layout
         drawerLayout.openDrawer(GravityCompat.START);
     }
-    public void ClickLogo(View view){
+    public void ClickLogo(View view) {
         //close drawer
         closeDrawer(drawerLayout);
     }
     public static void closeDrawer(DrawerLayout drawerLayout) {
         //close drawer layout
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             //when drawer is opes close it
             drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
-    public void ClickHome(View view){
+    public void ClickHome(View view) {
         //Redirect to landing page
+        redirectActivity(this, MainActivity.class);
+    }
+    public void ClickLogout(View view){
+        //Redirect to landing page
+        SessionManagement sessionManagement = new SessionManagement(ImageUploading.this);
+        sessionManagement.removeSession();
         redirectActivity(this,MainActivity.class);
     }
     public static void redirectActivity(Activity activity, Class aClass) {
         //Initialize intent
-        Intent intent = new Intent(activity,aClass);
+        Intent intent = new Intent(activity, aClass);
         //set flag
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         closeDrawer(drawerLayout);
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            // When an Image is picked
+            // When front Image is select
             if (requestCode == 0 && resultCode == RESULT_OK && null != data) {
                 // Get the Image from data
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                //display selected image in imageview
+                ImageView myImage = (ImageView) findViewById(R.id.imageViewFigureOne);
+                myImage.setImageBitmap(bitmap);
                 Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 assert cursor != null;
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 figureFrontPath = cursor.getString(columnIndex);
                 cursor.close();
-            }else if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
-                // Get the Image from data
+            } else if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
+                // Cloth Image is send
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                assert cursor != null;
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                figureSidePath = cursor.getString(columnIndex);
-                cursor.close();
-            }
-            else if (requestCode == 2 && resultCode == RESULT_OK && null != data) {
-                // Get the Image from data
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                ImageView myImage = (ImageView) findViewById(R.id.imageViewClothOne);
+                myImage.setImageBitmap(bitmap);
                 Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 assert cursor != null;
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 clothPath = cursor.getString(columnIndex);
                 cursor.close();
-            }
-            else {
+            } else {
                 Toast.makeText(this, "You haven't picked Image/Video", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
@@ -174,42 +201,42 @@ public class ImageUploading extends AppCompatActivity  {
 
     // Uploading Images to server
     private void uploadMultipleFiles() {
+
+        BodyImage bodyImage = new BodyImage();
+        //Use base64Encode
+       /* ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        String image = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
+        Service getResponse = new RetrofitConfig().getInstance().getService();
+        Call<ServerResponse> call = getResponse.uploadMulFileBaseFormat(image);*/
         // Map is used to multipart the file using okhttp3.RequestBody
-        File fileFigureFrontPath = new File(figureFrontPath);
-//        File fileFigureSide = new File(figureSidePath);
-//        File fileClothFront = new File(clothPath);
-
-        // Parsing any Media type file
-        RequestBody requestBody1 = RequestBody.create(MediaType.parse("*/*"), fileFigureFrontPath);
-//        RequestBody requestBody2 = RequestBody.create(MediaType.parse("*/*"), fileFigureSide);
-//        RequestBody requestBody3 = RequestBody.create(MediaType.parse("*/*"), fileClothFront);
-//        RequestBody email = RequestBody.create(MediaType.parse("text/plain"), authEmail);
-
-        MultipartBody.Part fileToUpload1 = MultipartBody.Part.createFormData("file1", fileFigureFrontPath.getName(), requestBody1);
-//        MultipartBody.Part fileToUpload2 = MultipartBody.Part.createFormData("file2", fileFigureSide.getName(), requestBody2);
-//        MultipartBody.Part fileToUpload3 = MultipartBody.Part.createFormData("file3", fileClothFront.getName(), requestBody3);
-
-        UserService getResponse = AppConfig.getRetrofit().create(UserService.class);
-        Call<ServerResponse> call = getResponse.uploadMulFile(fileToUpload1);
+        File clothFilePath = new File(clothPath);
+        File figureFilePath = new File(figureFrontPath);
+        RequestBody reqBody = RequestBody.create(clothFilePath, MediaType.parse("multipart/form-file"));
+        MultipartBody.Part clothPart = MultipartBody.Part.createFormData("file", clothFilePath.getName(), reqBody);
+        MultipartBody.Part figurePart = MultipartBody.Part.createFormData("file", figureFilePath.getName(), reqBody);
+        Service getResponse = new RetrofitConfig().getInstance().getService();
+        Call<ServerResponse> call = getResponse.uploadMulFile(clothPart,figurePart);
         call.enqueue(new Callback<ServerResponse>() {
             @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+            public void onResponse(Response<ServerResponse> response, Retrofit retrofit) {
                 ServerResponse serverResponse = response.body();
                 if (serverResponse != null) {
                     if (serverResponse.getSuccess()) {
-                        Toast.makeText(getApplicationContext(), serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        bodyImage.setImage("true");
+                        mDatabase.child("BodyImage").child(authUid).setValue(bodyImage);
                         Intent intent = new Intent(ImageUploading.this, ResultDisplay.class);
+                        intent.putExtra("result", serverResponse.getMessage());
                         startActivity(intent);
                     } else {
                         Toast.makeText(getApplicationContext(), serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    assert serverResponse != null;
                     Log.v("Response", serverResponse.toString());
                 }
             }
             @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
+            public void onFailure(Throwable t) {
                 Toast.makeText(getApplicationContext(), "failed uploading", Toast.LENGTH_SHORT).show();
             }
         });

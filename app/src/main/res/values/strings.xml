@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">SnapFit</string>
-    <string name="match_hint">Matching</string>
+    <string name="match_hint">Not Matching</string>
 </resources>

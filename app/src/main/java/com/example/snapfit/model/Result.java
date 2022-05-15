@@ -3,7 +3,7 @@ package com.example.snapfit.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class Result {
 
     @SerializedName("id")
     @Expose
@@ -14,10 +14,10 @@ public class User {
     private String status;
 
 
-    public User() {
+    public Result() {
     }
 
-    public User(int id, String status) {
+    public Result(int id, String status) {
         this.id = id;
         this.status = status;
     }

@@ -8,11 +8,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.TextureView;
 import android.view.View;
+import android.widget.TextView;
 
-import com.example.snapfit.model.User;
-import com.example.snapfit.retrofit.AppConfig;
-import com.example.snapfit.userservice.UserService;
+import com.example.snapfit.model.Result;
+import com.example.snapfit.userservice.Service;
 
 import java.util.List;
 
@@ -21,17 +22,35 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ResultDisplay extends AppCompatActivity {
-    private UserService userService;
     DrawerLayout drawerLayout;
+    String matchResult;
+    private TextView result;
     private static final String TAG = "ResultDisplay";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_display);
         drawerLayout = findViewById(R.id.drawer_layout);
-        userService = AppConfig.getRetrofit().create(UserService.class);
-        callReadAPI();
+        result = (TextView) findViewById(R.id.textView5);
+        //checking the passed Country value from previous acitvity and set it to text
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                matchResult = extras.getString("result");
+                if(matchResult.equals("matching")){
+                    result.setText("Matching");
+                }else{
+                    result.setText("Not-Matching");
+                }
+            } else {
+                result.setText("Error matchning");
+            }
+        }
     }
+
+
+
+    //Drawer functions
     public void ClickMenu(View view){
         //open drawer
         openDrawer(drawerLayout);
@@ -53,6 +72,12 @@ public class ResultDisplay extends AppCompatActivity {
     }
     public void ClickHome(View view){
         //Redirect to landing page
+        redirectActivity(this,ImageUploading.class);
+    }
+    public void ClickLogout(View view){
+        //Redirect to landing page
+        SessionManagement sessionManagement = new SessionManagement(ResultDisplay.this);
+        sessionManagement.removeSession();
         redirectActivity(this,MainActivity.class);
     }
     public static void redirectActivity(Activity activity, Class aClass) {
@@ -62,19 +87,5 @@ public class ResultDisplay extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
-    public void callReadAPI() {
-        // pass query parameter as user to get all the users
-        userService.getResults().enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                String message = response.message();
-                List<User> usersList = response.body();
-                int usersSize = usersList.size();
-                Log.i(TAG,"usersSize : "+ usersSize);
-            }
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-            }
-        });
-    }
+
 }
