@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">SnapFit</string>
     <string name="match_hint">Not Matching</string>
+    <string name="PearShapeSuggestion">According to the analyzed data, you have pear shaped body and fair skin color and your personal features your attire suits you well</string>
+    <string name="hourglassSuggestion">According to the analyzed data, you have hour-glass shaped body and fair skin color and your personal features your attire suits you well</string>
+    <string name="appleShape">According to the analyzed data, you have apple shaped body and tan skin color and your personal features your attire does not suits you well</string>
+    <string name="applematch">According to the analyzed data, you have apple shaped body and tan skin color.According to your personal features your attire suits you well</string>
 </resources>

@@ -43,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#FBFBFB"
+            android:onClick="goBack"
             app:layout_constraintBottom_toTopOf="@+id/cardView5"
             app:layout_constraintEnd_toStartOf="@+id/textView9"
             app:layout_constraintHorizontal_bias="0.234"
@@ -80,7 +81,7 @@
                     android:layout_width="185dp"
                     android:layout_height="160dp"
                     android:fontFamily="@font/semibold"
-                    android:text="According to the analyzed data, you have a pear shaped body and tan skin color.According to your personal features your attire suits you well"
+                    android:text=""
                     android:textAlignment="center"
                     android:textColor="#ffffff"
                     android:textSize="15dp"
@@ -234,7 +235,7 @@
             app:layout_constraintVertical_bias="0.225"
             tools:ignore="MissingConstraints">
 
-             <ImageView
+            <ImageView
                 android:id="@+id/clothImage5"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
